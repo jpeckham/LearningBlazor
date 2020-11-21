@@ -24,7 +24,11 @@ namespace LearningBlazor.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LearningBlazor.ServerAPI"));
 
-            builder.Services.AddApiAuthorization();
+            builder.Services.AddMsalAuthentication(options =>
+            {
+                builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://cee78fe6-7803-4d6c-8b86-a803740fd354/Users.Self");
+            });
 
             await builder.Build().RunAsync();
         }
