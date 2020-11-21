@@ -27,7 +27,8 @@ namespace LearningBlazor.Client
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://cee78fe6-7803-4d6c-8b86-a803740fd354/Users.Self");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://22accc6c-5ff1-4ed3-911e-371033a24f6e/Users.Self");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://22accc6c-5ff1-4ed3-911e-371033a24f6e/Weather.Read");
             });
 
             await builder.Build().RunAsync();

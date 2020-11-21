@@ -24,8 +24,25 @@ namespace LearningBlazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-                .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+            //This stuff the dot cli puts in doesn't work
+            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+            //    .AddAzureADBearer(
+            //        options =>
+            //        {
+            //            Configuration.Bind("AzureAd", options);
+            //        }
+            //    );
+
+            services.AddAuthentication(o =>
+                {
+                    // AspNetCore uses the DefaultAuthenticateScheme as a name for the JwtBearerOptions. You can skip these settings because .AddJwtBearer() is doing exactly this.
+                    o.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                    o.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(
+                    options => Configuration.Bind("Jwt", options)
+                );
+
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -54,7 +71,7 @@ namespace LearningBlazor.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+      
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
