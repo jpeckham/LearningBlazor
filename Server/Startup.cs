@@ -43,7 +43,7 @@ namespace LearningBlazor.Server
                     options => Configuration.Bind("Jwt", options)
                 );
 
-
+            services.AddAuthorizationCore();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -62,7 +62,7 @@ namespace LearningBlazor.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();

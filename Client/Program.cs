@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using LearningBlazor.Client.Authorization;
 
 namespace LearningBlazor.Client
 {
@@ -24,12 +25,19 @@ namespace LearningBlazor.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LearningBlazor.ServerAPI"));
 
-            builder.Services.AddMsalAuthentication(options =>
+            builder.Services.AddMsalAuthentication<RemoteAuthenticationState, CustomUserAccount>(options =>
             {
                 builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://22accc6c-5ff1-4ed3-911e-371033a24f6e/Users.Self");
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://22accc6c-5ff1-4ed3-911e-371033a24f6e/Weather.Read");
-            });
+                // had to add this to recognize 'role claims as roles' for things like auth view
+                options.UserOptions.RoleClaim = "role";
+                //options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("api://717be025-c1e9-4ba3-acb8-bb8c8a7f0865/Weather.Read");
+            })
+                // had to add custom factory to turn "Roles" claim into "Role" Claims
+                .AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, CustomUserAccount, CustomAccountFactory>();
+
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
 
             await builder.Build().RunAsync();
         }

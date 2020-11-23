@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using Microsoft.Identity.Web.Resource;
 
 namespace LearningBlazor.Server.Controllers
 {
@@ -27,8 +29,13 @@ namespace LearningBlazor.Server.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "SecureMethod")]
         public IEnumerable<WeatherForecast> Get()
         {
+            //we dont' do this anymore see https://docs.microsoft.com/en-us/aspnet/core/migration/claimsprincipal-current?view=aspnetcore-5.0
+            //var principal = ClaimsPrincipal.Current;
+            //var roleClaim = principal.FindFirst("roles");
+            var isSecureMethod = User.IsInRole("SecureMethod");
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
